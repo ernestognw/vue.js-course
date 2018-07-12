@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <title>Curso de Vue.js</title>
+</head>
+<body>
+  
+  <div id="app">
+    <form @submit.prevent="submit" method="get">
+      <h2>¿Cuáles son tus cursos favoritos?</h2>
+      <template v-for="c in cursos">
+        <curso 
+          :curso="c"
+          @checked="selectCurso"
+        />
+      </template>
+      <button class="btn btn-primary" type="submit">Enviar</button>
+    </form>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  Vue.component('curso', {
+    props: [ 'curso'],
+    methods: {
+      onChange(ev) {
+        this.$emit('checked', this.curso.value, ev.target.checked)
+      }
+    },
+    template: `
+      <div>
+        <input type="checkbox" :id="curso.value" :value="curso.value" @change="onChange">
+        <label :for="curso.value">{{ curso.nombre }}</label>
+      </div>
+      `
+  });
+
+  let app = new Vue({ 
+    el: '#app',
+    data: {
+      cursos: [
+        { 
+          nombre: 'Curso de Introducción a Vue.js',
+          value: 'vue'
+        },
+        { 
+          nombre: 'Curso de SEO',
+          value: 'seo'
+        },
+        { 
+          nombre: 'React y redux',
+          value: 'react'
+        },
+        { 
+          nombre: 'Curso de Growth Marketing',
+          value: 'growth'
+        }
+      ],
+      cursosSeleccionados: [],
+    },
+    methods: {
+      submit() {
+        console.log('Funciona')
+        console.log(this.cursosSeleccionados)
+      },
+      selectCurso(curso, checked) {
+        if (checked) {
+          this.cursosSeleccionados.push(curso)
+        } else {
+          let i = this.cursosSeleccionados.indexOf(curso);
+          this.cursosSeleccionados.splice(i, 1)
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
