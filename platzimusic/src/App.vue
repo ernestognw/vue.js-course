@@ -2,30 +2,61 @@
   #app
     img(src='./assets/logo.png')
     h1 PlatziMusic
-    ul
-      artist(v-for="artist in artists" :artist="artist")
+    select(v-model="selectedCountry")
+      option(v-for="country in countries" :value="country.name") {{ country.translations.es }}
+    spinner(v-show="loading")
+    ul(v-show="artists")
+      artist(v-for="artist in artists" :artist="artist" :key="artist.mbid")
+    p(v-show="!artists || artists.length == 0") No se encontró información en este país :(
 </template>
 
 <script>
 import getArtists from './api/';
-import artist from './components/artist'
+import artist from './components/artist';
+import getCountries from './api/countries';
+import spinner from './components/spinner'
 
 export default {
   name: 'app',
   data () {
     return {
-      artists: []
+      artists: [],
+      countries: [],
+      selectedCountry: 'Argentina',
+      loading: true,
     }
   },
   components: {
     artist,
+    spinner
   },
-  mounted: function () {
-    const self = this
-    getArtists()
-      .then(function (artists) {
-        self.artists = artists
-      })
+  methods: {
+    refreshArtist() {
+      const self = this
+      self.loading = true;
+      self.artists = [];
+      getArtists(this.selectedCountry)
+        .then(function (artists) {
+          self.loading = false
+          self.artists = artists
+        })
+    },
+    getCountryList() {
+      const self = this
+      getCountries()
+        .then(function (countries) {
+          self.countries = countries
+        })
+    }
+  },
+  mounted() {
+    this.getCountryList()
+    this.refreshArtist()
+  },
+  watch: {
+    selectedCountry () {
+      this.refreshArtist()
+    }
   }
 }
 </script>

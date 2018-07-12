@@ -11,7 +11,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 li
   display block
   magin 10px 0
